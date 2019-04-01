@@ -1,21 +1,21 @@
 #ifndef _bno055_i2c_activity_dot_h
 #define _bno055_i2c_activity_dot_h
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 #include <cstdlib>
 #include <cerrno>
 #include <cstring>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 
-#include <sensor_msgs/Imu.h>
-#include <sensor_msgs/MagneticField.h>
-#include <sensor_msgs/Temperature.h>
-#include <std_srvs/Trigger.h>
-#include <std_msgs/UInt8.h>
-#include <diagnostic_msgs/DiagnosticStatus.h>
-#include <diagnostic_msgs/DiagnosticArray.h>
-#include <diagnostic_msgs/KeyValue.h>
+#include <sensor_msgs/msg/imu.hpp>
+#include <sensor_msgs/msg/magnetic_field.hpp>
+#include <sensor_msgs/msg/temperature.hpp>
+#include <std_srvs/srv/trigger.hpp>
+#include <std_msgs/msg/u_int8.hpp>
+#include <diagnostic_msgs/msg/diagnostic_status.hpp>
+#include <diagnostic_msgs/msg/diagnostic_array.hpp>
+#include <diagnostic_msgs/msg/key_value.hpp>
 
 #include <linux/i2c-dev.h>
 #include <smbus_functions.h>
@@ -231,16 +231,18 @@ typedef struct {
   uint8_t system_error_code;
 } IMURecord;
 
-class BNO055I2CActivity {
+class BNO055I2CActivity :public rclcpp::Node{
   public:
-    BNO055I2CActivity(ros::NodeHandle &_nh, ros::NodeHandle &_nh_priv);
+    BNO055I2CActivity();
 
     bool start();
     bool stop();
     bool spinOnce();
 
-    bool onServiceReset(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
-    bool onServiceCalibrate(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
+    bool onServiceReset(std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                        std::shared_ptr<std_srvs::srv::Trigger::Response> response);
+    bool onServiceCalibrate(std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                            std::shared_ptr<std_srvs::srv::Trigger::Response> response);
 
   private:
     bool reset();
@@ -248,7 +250,7 @@ class BNO055I2CActivity {
     // class variables
     uint32_t seq = 0;
     int file;
-    diagnostic_msgs::DiagnosticStatus current_status;
+    diagnostic_msgs::msg::DiagnosticStatus current_status;
 
     // ROS parameters
     std::string param_frame_id;
@@ -256,19 +258,18 @@ class BNO055I2CActivity {
     int param_address;
 
     // ROS node handles
-    ros::NodeHandle nh;
-    ros::NodeHandle nh_priv;
+    rclcpp::Clock clock;
 
     // ROS publishers
-    ros::Publisher pub_data;
-    ros::Publisher pub_raw;
-    ros::Publisher pub_mag;
-    ros::Publisher pub_temp;
-    ros::Publisher pub_status;
+    rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_data;
+    rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_raw;
+    rclcpp::Publisher<sensor_msgs::msg::MagneticField >::SharedPtr pub_mag;
+    rclcpp::Publisher<sensor_msgs::msg::Temperature >::SharedPtr pub_temp;
+    rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr pub_status;
 
     // ROS subscribers
-    ros::ServiceServer service_calibrate;
-    ros::ServiceServer service_reset;
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr service_calibrate;
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr service_reset;
 };
 
 }

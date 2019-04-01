@@ -11,55 +11,26 @@
 #include <csignal>
 
 int main(int argc, char *argv[]) {
-    ros::NodeHandle* nh = NULL;
-    ros::NodeHandle* nh_priv = NULL;
+    rclcpp::init(argc, argv);
 
-    imu_bno055::BNO055I2CActivity* activity = NULL;
+    auto activity = std::make_shared<imu_bno055::BNO055I2CActivity>();
+
     watchdog::Watchdog* watchdog = NULL;
 
-    ros::init(argc, argv, "bno055_node");
-
-    nh = new ros::NodeHandle();
-    if(!nh) {
-        ROS_FATAL("Failed to initialize NodeHandle");
-        ros::shutdown();
-        return -1;
-    }
-
-    nh_priv = new ros::NodeHandle("~");
-    if(!nh_priv) {
-        ROS_FATAL("Failed to initialize private NodeHandle");
-        delete nh;
-        ros::shutdown();
-        return -2;
-    }
-
-    activity = new imu_bno055::BNO055I2CActivity(*nh, *nh_priv);
     watchdog = new watchdog::Watchdog();
 
-    if(!activity) {
-        ROS_FATAL("Failed to initialize driver");
-        delete nh_priv;
-        delete nh;
-        ros::shutdown();
-        return -3;
-    }
-
     if(!activity->start()) {
-        ROS_ERROR("Failed to start activity");
-        delete nh_priv;
-        delete nh;
-        ros::shutdown();
+        RCLCPP_INFO(activity->get_logger(), "Failed to start activity");
         return -4;
     }
 
     watchdog->start(5000);
 
     int param_rate;
-    nh_priv->param("rate", param_rate, (int)100);
+    activity->get_parameter_or_set("rate", param_rate, 100);
 
-    ros::Rate rate(param_rate);
-    while(ros::ok()) {
+    rclcpp::Rate rate(param_rate);
+    while(rclcpp::ok()) {
         rate.sleep();
         if(activity->spinOnce()) {
             watchdog->refresh();
@@ -69,10 +40,9 @@ int main(int argc, char *argv[]) {
     activity->stop();
     watchdog->stop();
 
+    rclcpp::shutdown();
+
     delete watchdog;
-    delete activity;
-    delete nh_priv;
-    delete nh;
 
     return 0;
 }
