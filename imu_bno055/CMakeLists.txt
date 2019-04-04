@@ -39,13 +39,17 @@ set(LIBS ${ament_cmake_LIBRARIES} ${diagnostic_msgs_LIBRARIES}
 
 
 install(TARGETS bno055_i2c_node
-  ARCHIVE
-  DESTINATION lib
-  LIBRARY
-  DESTINATION lib
-  RUNTIME
-  DESTINATION bin)
+        ARCHIVE
+        DESTINATION lib
+        LIBRARY
+        DESTINATION lib
+        RUNTIME
+        DESTINATION bin)
 
+install(TARGETS
+        bno055_i2c_node
+        DESTINATION lib/${PROJECT_NAME}
+        )
 
 ament_export_dependencies(ament_cmake)
 ament_export_dependencies(diagnostic_msgs)
