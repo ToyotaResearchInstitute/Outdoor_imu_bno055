@@ -20,6 +20,12 @@ BNO055I2CActivity::BNO055I2CActivity() : rclcpp::Node("BNO055I2C") {
     get_parameter_or_set("address", param_address, (int)BNO055_ADDRESS_A);
     get_parameter_or_set("frame_id", param_frame_id, std::string("imu"));
 
+    get_parameter_or_set("data_topic_name", data_topic_name_, std::string("bno055_data"));
+    get_parameter_or_set("raw_topic_name", raw_topic_name_, std::string("bno055_raw"));
+    get_parameter_or_set("mag_topic_name", mag_topic_name_, std::string("bno055_mag"));
+    get_parameter_or_set("temperature_topic_name", temperature_topic_name_, std::string("bno055_temperature"));
+    get_parameter_or_set("status_topic_name", status_topic_name_, std::string("bno055_status"));
+
     current_status.level = 0;
     current_status.name = "BNO055 IMU";
     current_status.hardware_id = "bno055_i2c";
@@ -100,14 +106,14 @@ bool BNO055I2CActivity::start() {
     RCLCPP_INFO(get_logger(), "starting");
 
     auto profile = rmw_qos_profile_default;
-    pub_data = this->create_publisher<sensor_msgs::msg::Imu>("data", profile);
-    pub_raw = this->create_publisher<sensor_msgs::msg::Imu>("raw", profile);
-    pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>("mag", profile);
-    pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>("temp", profile);
-    pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>("status", profile);
+    pub_data = this->create_publisher<sensor_msgs::msg::Imu>(data_topic_name_, profile);
+    pub_raw = this->create_publisher<sensor_msgs::msg::Imu>(raw_topic_name_, profile);
+    pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>(mag_topic_name_, profile);
+    pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>(temperature_topic_name_, profile);
+    pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(status_topic_name_, profile);
 
     if(!service_calibrate) {
-        service_calibrate = this->create_service<std_srvs::srv::Trigger>("calibrate",
+        service_calibrate = this->create_service<std_srvs::srv::Trigger>("bno055_calibrate",
          [this](const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                 const std::shared_ptr<std_srvs::srv::Trigger::Response> response) -> void {
            this->onServiceCalibrate(request,response);
@@ -115,7 +121,7 @@ bool BNO055I2CActivity::start() {
     }
 
     if(!service_reset) {
-        service_reset = this->create_service<std_srvs::srv::Trigger>("reset",
+        service_reset = this->create_service<std_srvs::srv::Trigger>("bno055_reset",
          [this](const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                 const std::shared_ptr<std_srvs::srv::Trigger::Response> response) -> void {
            this->onServiceReset(request,response);

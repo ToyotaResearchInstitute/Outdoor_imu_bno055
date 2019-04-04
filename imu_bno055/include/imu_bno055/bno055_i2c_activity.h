@@ -261,6 +261,11 @@ class BNO055I2CActivity :public rclcpp::Node{
     rclcpp::Clock clock;
 
     // ROS publishers
+    std::string data_topic_name_;
+    std::string raw_topic_name_;
+    std::string mag_topic_name_;
+    std::string temperature_topic_name_;
+    std::string status_topic_name_;
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_data;
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_raw;
     rclcpp::Publisher<sensor_msgs::msg::MagneticField >::SharedPtr pub_mag;
