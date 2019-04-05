@@ -1,4 +1,4 @@
-BNO055I2C:
+bno055_i2c_node:
     ros__parameters:
         device: /dev/i2c-0
         address: 40 # 0x28

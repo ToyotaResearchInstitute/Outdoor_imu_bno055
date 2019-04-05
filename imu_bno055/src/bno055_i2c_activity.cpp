@@ -13,7 +13,7 @@ namespace imu_bno055 {
 
 // ******** constructors ******** //
 
-BNO055I2CActivity::BNO055I2CActivity() : rclcpp::Node("BNO055I2C") {
+BNO055I2CActivity::BNO055I2CActivity() : rclcpp::Node("bno055_i2c_node") {
     RCLCPP_INFO(get_logger(), "initializing");
 
     get_parameter_or_set("device", param_device, std::string("/dev/i2c-0"));
