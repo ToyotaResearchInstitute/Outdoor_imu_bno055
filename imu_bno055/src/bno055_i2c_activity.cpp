@@ -138,6 +138,8 @@ bool BNO055I2CActivity::start() {
         RCLCPP_ERROR(get_logger(), "incorrect chip ID");
         return false;
     }
+    RCLCPP_INFO(get_logger(), "Opened i2c device %s", param_device.c_str());
+
     std::stringstream ss;
     ss << "rev ids:"
       << " accel:" << _i2c_smbus_read_byte_data(file, BNO055_ACCEL_REV_ID_ADDR)
