@@ -130,12 +130,12 @@ bool BNO055I2CActivity::start() {
 
     file = open(param_device.c_str(), O_RDWR);
     if(ioctl(file, I2C_SLAVE, param_address) < 0) {
-        RCLCPP_ERROR(get_logger(), "i2c device open failed");
+        RCLCPP_ERROR(get_logger(), "i2c device open failed on: %s", param_device.c_str());
         return false;
     }
 
     if(_i2c_smbus_read_byte_data(file, BNO055_CHIP_ID_ADDR) != BNO055_ID) {
-        RCLCPP_ERROR(get_logger(), "incorrect chip ID");
+        RCLCPP_ERROR(get_logger(), "incorrect chip ID with s2c device: %s", param_device.c_str());
         return false;
     }
     RCLCPP_INFO(get_logger(), "Opened i2c device %s", param_device.c_str());
