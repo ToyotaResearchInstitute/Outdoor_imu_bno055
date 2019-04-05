@@ -51,6 +51,11 @@ install(TARGETS
         DESTINATION lib/${PROJECT_NAME}
         )
 
+install(FILES
+        config/default_muppet_imu_bno055_params.yaml
+        DESTINATION share/${PROJECT_NAME}
+        )
+
 ament_export_dependencies(ament_cmake)
 ament_export_dependencies(diagnostic_msgs)
 ament_export_dependencies(sensor_msgs)
