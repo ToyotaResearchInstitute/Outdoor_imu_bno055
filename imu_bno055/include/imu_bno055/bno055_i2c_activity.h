@@ -258,7 +258,7 @@ class BNO055I2CActivity :public rclcpp::Node{
     int param_address;
 
     // ROS node handles
-    rclcpp::Clock clock;
+    rclcpp::Clock clock_;
 
     // ROS publishers
     std::string data_topic_name_;
