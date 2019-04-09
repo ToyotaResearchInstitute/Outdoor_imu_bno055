@@ -106,11 +106,16 @@ bool BNO055I2CActivity::start() {
     RCLCPP_INFO(get_logger(), "starting");
 
     auto profile = rmw_qos_profile_default;
-    pub_data = this->create_publisher<sensor_msgs::msg::Imu>(data_topic_name_, profile);
-    pub_raw = this->create_publisher<sensor_msgs::msg::Imu>(raw_topic_name_, profile);
-    pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>(mag_topic_name_, profile);
-    pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>(temperature_topic_name_, profile);
-    pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(status_topic_name_, profile);
+    if (!pub_data)
+        pub_data = this->create_publisher<sensor_msgs::msg::Imu>(data_topic_name_, profile);
+    if (!pub_raw)
+        pub_raw = this->create_publisher<sensor_msgs::msg::Imu>(raw_topic_name_, profile);
+    if (!pub_mag)
+        pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>(mag_topic_name_, profile);
+    if (!pub_temp)
+        pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>(temperature_topic_name_, profile);
+    if (!pub_status)
+        pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(status_topic_name_, profile);
 
     if(!service_calibrate) {
         service_calibrate = this->create_service<std_srvs::srv::Trigger>("bno055_calibrate",
@@ -160,7 +165,7 @@ bool BNO055I2CActivity::start() {
 bool BNO055I2CActivity::spinOnce() {
     rclcpp::spin_some(shared_from_this());
 
-    rclcpp::Time time = clock.now();
+    rclcpp::Time time = clock_.now();
 
     IMURecord record;
 
@@ -244,6 +249,13 @@ bool BNO055I2CActivity::spinOnce() {
 
 bool BNO055I2CActivity::stop() {
     RCLCPP_INFO(get_logger(), "stopping");
+    pub_data = nullptr;
+    pub_raw = nullptr;
+    pub_mag = nullptr;
+    pub_temp = nullptr;
+    pub_status = nullptr;
+    service_calibrate = nullptr;
+    service_reset = nullptr;
 
     return true;
 }
