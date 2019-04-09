@@ -20,11 +20,11 @@ BNO055I2CActivity::BNO055I2CActivity() : rclcpp::Node("bno055_i2c_node") {
     get_parameter_or_set("address", param_address, (int)BNO055_ADDRESS_A);
     get_parameter_or_set("frame_id", param_frame_id, std::string("imu"));
 
-    get_parameter_or_set("data_topic_name", data_topic_name_, std::string("bno055_data"));
-    get_parameter_or_set("raw_topic_name", raw_topic_name_, std::string("bno055_raw"));
-    get_parameter_or_set("mag_topic_name", mag_topic_name_, std::string("bno055_mag"));
-    get_parameter_or_set("temperature_topic_name", temperature_topic_name_, std::string("bno055_temperature"));
-    get_parameter_or_set("status_topic_name", status_topic_name_, std::string("bno055_status"));
+    get_parameter_or_set("data_topic_name", data_topic_name, std::string("bno055_data"));
+    get_parameter_or_set("raw_topic_name", raw_topic_name, std::string("bno055_raw"));
+    get_parameter_or_set("mag_topic_name", mag_topic_name, std::string("bno055_mag"));
+    get_parameter_or_set("temperature_topic_name", temperature_topic_name, std::string("bno055_temperature"));
+    get_parameter_or_set("status_topic_name", status_topic_name, std::string("bno055_status"));
 
     current_status.level = 0;
     current_status.name = "BNO055 IMU";
@@ -107,15 +107,15 @@ bool BNO055I2CActivity::start() {
 
     auto profile = rmw_qos_profile_default;
     if (!pub_data)
-        pub_data = this->create_publisher<sensor_msgs::msg::Imu>(data_topic_name_, profile);
+        pub_data = this->create_publisher<sensor_msgs::msg::Imu>(data_topic_name, profile);
     if (!pub_raw)
-        pub_raw = this->create_publisher<sensor_msgs::msg::Imu>(raw_topic_name_, profile);
+        pub_raw = this->create_publisher<sensor_msgs::msg::Imu>(raw_topic_name, profile);
     if (!pub_mag)
-        pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>(mag_topic_name_, profile);
+        pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>(mag_topic_name, profile);
     if (!pub_temp)
-        pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>(temperature_topic_name_, profile);
+        pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>(temperature_topic_name, profile);
     if (!pub_status)
-        pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(status_topic_name_, profile);
+        pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(status_topic_name, profile);
 
     if(!service_calibrate) {
         service_calibrate = this->create_service<std_srvs::srv::Trigger>("bno055_calibrate",
@@ -165,7 +165,7 @@ bool BNO055I2CActivity::start() {
 bool BNO055I2CActivity::spinOnce() {
     rclcpp::spin_some(shared_from_this());
 
-    rclcpp::Time time = clock_.now();
+    rclcpp::Time time = clock.now();
 
     IMURecord record;
 
