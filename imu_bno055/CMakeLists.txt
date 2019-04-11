@@ -42,10 +42,11 @@ install(TARGETS
         DESTINATION lib/${PROJECT_NAME}
         )
 
-install(FILES
-        config/default_muppet_imu_bno055_params.yaml
+install(DIRECTORY
+        config
+        launch
         DESTINATION share/${PROJECT_NAME}
-        )
+)
 
 install(
         DIRECTORY include/
