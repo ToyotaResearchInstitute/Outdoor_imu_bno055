@@ -35,7 +35,7 @@ You may need to add your user to the i2c group, e.g. `sudo usermod -aG i2c nvidi
 
 # ROS2
 ## build with colcon
-`colcon build --cmake-args --event-handler console_direct+ --packages-select  imu_bno055`
+`colcon build --event-handler console_direct+ --packages-select  imu_bno055`
 
 ## launch
 `ros2 launch imu_bno055 imu.launch.py`
