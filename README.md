@@ -33,3 +33,18 @@ The Raspberry Pi hardware I2C does not support clock stretching. You have two op
 
 You may need to add your user to the i2c group, e.g. `sudo usermod -aG i2c nvidia`. It should just work after that.
 
+# ROS2
+## build with colcon
+`colcon build --cmake-args --event-handler console_direct+ --packages-select  imu_bno055`
+
+## launch
+`ros2 launch imu_bno055 imu.launch.py`
+
+## config
+In `config/default_imu_bno055.yaml` you can
+
+* change the i2c device and address
+* Change the topic names that will be published.  
+* Change the frame name of the imu data
+
+
