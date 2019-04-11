@@ -185,7 +185,6 @@ bool BNO055I2CActivity::spinOnce() {
     sensor_msgs::msg::Imu msg_raw;
     msg_raw.header.stamp = time;
     msg_raw.header.frame_id = param_frame_id;
-//    msg_raw.header.seq = seq;
     msg_raw.linear_acceleration.x = (double)record.raw_linear_acceleration_x / 100.0;
     msg_raw.linear_acceleration.y = (double)record.raw_linear_acceleration_y / 100.0;
     msg_raw.linear_acceleration.z = (double)record.raw_linear_acceleration_z / 100.0;
@@ -196,7 +195,6 @@ bool BNO055I2CActivity::spinOnce() {
     sensor_msgs::msg::MagneticField msg_mag;
     msg_mag.header.stamp = time;
     msg_mag.header.frame_id = param_frame_id;
-//    msg_mag.header.seq = seq;
     msg_mag.magnetic_field.x = (double)record.raw_magnetic_field_x / 16.0;
     msg_mag.magnetic_field.y = (double)record.raw_magnetic_field_y / 16.0;
     msg_mag.magnetic_field.z = (double)record.raw_magnetic_field_z / 16.0;
@@ -204,7 +202,6 @@ bool BNO055I2CActivity::spinOnce() {
     sensor_msgs::msg::Imu msg_data;
     msg_data.header.stamp = time;
     msg_data.header.frame_id = param_frame_id;
-//    msg_data.header.seq = seq;
 
     double fused_orientation_norm = std::pow(
       std::pow(record.fused_orientation_w, 2) +
@@ -226,7 +223,6 @@ bool BNO055I2CActivity::spinOnce() {
     sensor_msgs::msg::Temperature msg_temp;
     msg_temp.header.stamp = time;
     msg_temp.header.frame_id = param_frame_id;
-//    msg_temp.header.seq = seq;
     msg_temp.temperature = (double)record.temperature;
 
     pub_data->publish(msg_data);
@@ -263,7 +259,7 @@ bool BNO055I2CActivity::stop() {
 bool BNO055I2CActivity::onServiceReset(std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                                        std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
     if(!reset()) {
-        RCLCPP_INFO(get_logger(), "chip reset and setup failed");
+        RCLCPP_ERROR(get_logger(), "chip reset and setup failed");
         response->success = false;
         return false;
     }

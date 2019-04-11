@@ -43,7 +43,7 @@ You may need to add your user to the i2c group, e.g. `sudo usermod -aG i2c nvidi
 ## config
 In `config/default_imu_bno055.yaml` you can
 
-* change the i2c device and address
+* Change the i2c device and address
 * Change the topic names that will be published.  
 * Change the frame name of the imu data
 

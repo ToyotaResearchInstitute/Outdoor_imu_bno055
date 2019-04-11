@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     watchdog = new watchdog::Watchdog();
 
     if(!activity->start()) {
-        RCLCPP_INFO(activity->get_logger(), "Failed to start activity");
+        RCLCPP_ERROR(activity->get_logger(), "Failed to start activity");
         return -4;
     }
 
