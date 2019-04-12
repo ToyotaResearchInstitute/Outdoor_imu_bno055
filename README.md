@@ -4,6 +4,8 @@ This is a ROS node for the BNO055 IMU that communicates via I2C and without any 
 
 The BNO055 supports I2C and UART communication. This driver supports I2C only. If you are looking for a UART driver, see [this driver](https://github.com/mdrwiega/bosch_imu_driver) by [mdrwiega](https://github.com/mdrwiega) instead.
 
+For **ROS2** usage, follow the instructions in the ROS2 section below
+
 ## Parameters:
 
 * **device** -- the path to the i2c device. Default is /dev/i2c-1. Use i2cdetect in the i2c-tools package to find out which bus your IMU is on.
@@ -34,15 +36,25 @@ The Raspberry Pi hardware I2C does not support clock stretching. You have two op
 You may need to add your user to the i2c group, e.g. `sudo usermod -aG i2c nvidia`. It should just work after that.
 
 # ROS2
+## checkout ros2 branch
+`cd /this/repo/dir`
+
+`git checkout ros2`
+
 ## build with colcon
 `colcon build --event-handler console_direct+ --packages-select  imu_bno055`
 
 ## launch
-`ros2 launch imu_bno055 imu.launch.py`
+`ros2 launch imu_bno055 imu_launch.py`
 
 ## config
-In `config/default_imu_bno055.yaml` you can
+A default configuration file, `config/default_imu_bno055.yaml`, listing all settable parameters is provided and is used by the provided default launch file.
+If you need to change any of the parameters, it is recommended that you create an appropriate configuration file for your system and reference that in an appropriate launch file for your system.
+The defaults provided here are for reference.
 
+All default output topics and service calls are the same as for the ROS driver
+
+In the configuration file you can 
 * Change the i2c device and address
 * Change the topic names that will be published.  
 * Change the frame name of the imu data
