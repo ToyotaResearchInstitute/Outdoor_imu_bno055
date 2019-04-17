@@ -1,0 +1,10 @@
+bno055_i2c_node:
+    ros__parameters:
+        device: /dev/i2c-1
+        address: 40 # 0x28
+        frame_id: imu
+        data_topic_name: data
+        raw_topic_name: raw
+        mag_topic_name: mag
+        temperature_topic_name: temperature
+        data_status_topic_nametopic_name: status

@@ -1,24 +1,62 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(imu_bno055)
 
-add_compile_options(-std=c++11 -li2c)
+# Add support for C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 
-find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs std_msgs diagnostic_msgs)
+add_compile_options(-li2c)
 
-catkin_package(INCLUDE_DIRS include)
+find_package(ament_cmake REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include src)
 
-add_executable(bno055_i2c_node src/bno055_i2c_activity.cpp src/bno055_i2c_node.cpp src/watchdog.cpp)
-#add_dependencies(bno055_i2c_node diagnostic_msgs_gencpp)
+add_executable(bno055_i2c_node src/bno055_i2c_activity.cpp
+  src/bno055_i2c_node.cpp src/watchdog.cpp)
 
-include_directories(${catkin_INCLUDE_DIRS})
 
-target_link_libraries(bno055_i2c_node ${catkin_LIBRARIES})
+ament_target_dependencies(bno055_i2c_node
+        rclcpp
+        sensor_msgs
+        diagnostic_msgs
+        std_srvs
+        )
+
 
 install(TARGETS bno055_i2c_node
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+        ARCHIVE
+        DESTINATION lib
+        LIBRARY
+        DESTINATION lib
+        RUNTIME
+        DESTINATION bin)
+
+install(TARGETS
+        bno055_i2c_node
+        DESTINATION lib/${PROJECT_NAME}
+        )
+
+install(DIRECTORY
+        config
+        launch
+        DESTINATION share/${PROJECT_NAME}
 )
 
+install(
+        DIRECTORY include/
+        DESTINATION include)
+
+ament_export_dependencies(ament_cmake)
+ament_export_dependencies(diagnostic_msgs)
+ament_export_dependencies(sensor_msgs)
+ament_export_dependencies(rclcpp)
+ament_export_dependencies(std_msgs)
+ament_export_dependencies(std_srvs)
+
+ament_package()
