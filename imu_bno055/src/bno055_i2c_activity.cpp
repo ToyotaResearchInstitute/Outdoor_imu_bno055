@@ -5,9 +5,15 @@
  * and which handles all ROS duties.
  */
 
+#include <chrono>
 #include <cmath>
-#include "imu_bno055/bno055_i2c_activity.h"
+#include <memory>
+#include <sstream>
+#include <string>
+
 #include "rclcpp/logger.hpp"
+
+#include "imu_bno055/bno055_i2c_activity.h"
 
 namespace imu_bno055 {
 
@@ -106,16 +112,21 @@ bool BNO055I2CActivity::start() {
     RCLCPP_INFO(get_logger(), "starting");
 
     auto profile = rmw_qos_profile_default;
-    if (!pub_data)
+    if (!pub_data) {
         pub_data = this->create_publisher<sensor_msgs::msg::Imu>(data_topic_name, profile);
-    if (!pub_raw)
+    }
+    if (!pub_raw) {
         pub_raw = this->create_publisher<sensor_msgs::msg::Imu>(raw_topic_name, profile);
-    if (!pub_mag)
+    }
+    if (!pub_mag) {
         pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>(mag_topic_name, profile);
-    if (!pub_temp)
+    }
+    if (!pub_temp) {
         pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>(temperature_topic_name, profile);
-    if (!pub_status)
+    }
+    if (!pub_status) {
         pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(status_topic_name, profile);
+    }
 
     if(!service_calibrate) {
         service_calibrate = this->create_service<std_srvs::srv::Trigger>("bno055_calibrate",
@@ -133,7 +144,7 @@ bool BNO055I2CActivity::start() {
          });
     }
 
-    file = open(param_device.c_str(), O_RDWR);
+    file = open(param_device.c_str(), O_RDWR|O_CLOEXEC);
     if(ioctl(file, I2C_SLAVE, param_address) < 0) {
         RCLCPP_ERROR(get_logger(), "i2c device open failed on: %s", param_device.c_str());
         return false;
@@ -167,7 +178,7 @@ bool BNO055I2CActivity::spinOnce() {
 
     rclcpp::Time time = clock.now();
 
-    IMURecord record;
+    IMURecord record{};
 
     unsigned char c = 0;
 
@@ -258,6 +269,7 @@ bool BNO055I2CActivity::stop() {
 
 bool BNO055I2CActivity::onServiceReset(std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                                        std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+    (void)request;
     if(!reset()) {
         RCLCPP_ERROR(get_logger(), "chip reset and setup failed");
         response->success = false;
@@ -270,8 +282,9 @@ bool BNO055I2CActivity::onServiceReset(std::shared_ptr<std_srvs::srv::Trigger::R
 bool BNO055I2CActivity::onServiceCalibrate(std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                                            std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
     // TODO implement this
+    (void)request;
     response->success = false;
     return true;
 }
 
-}
+}  // namespace imu_bno055

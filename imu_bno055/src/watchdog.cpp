@@ -1,3 +1,8 @@
+#include <chrono>
+#include <functional>
+#include <iostream>
+#include <mutex>
+
 #include "watchdog/watchdog.h"
 
 namespace watchdog {
@@ -21,7 +26,9 @@ Watchdog::~Watchdog() {
 
 void Watchdog::start(unsigned int _interval) {
     std::unique_lock<std::mutex> lock(mutex);
-    if(isRunning) return;
+    if(isRunning) {
+      return;
+    }
 
     lastRefreshTime = std::chrono::steady_clock::now();
     interval = _interval;
@@ -31,7 +38,9 @@ void Watchdog::start(unsigned int _interval) {
 
 void Watchdog::stop() {
     std::unique_lock<std::mutex> lock(mutex);
-    if(!isRunning) return;
+    if(!isRunning) {
+      return;
+    }
 
     isRunning = false;
     stopCondition.notify_all();
@@ -55,6 +64,6 @@ void Watchdog::loop() {
         }
       }
     }
-}  
+}
 
-}  
+}  // namespace watchdog
