@@ -6,18 +6,18 @@
  * working.
  */
 
-#include <imu_bno055/bno055_i2c_activity.h>
+#include <memory>
+
 #include "watchdog/watchdog.h"
-#include <csignal>
+
+#include <imu_bno055/bno055_i2c_activity.h>
 
 int main(int argc, char *argv[]) {
     rclcpp::init(argc, argv);
 
     auto activity = std::make_shared<imu_bno055::BNO055I2CActivity>();
 
-    watchdog::Watchdog* watchdog = NULL;
-
-    watchdog = new watchdog::Watchdog();
+    auto watchdog = std::make_unique<watchdog::Watchdog>();
 
     if(!activity->start()) {
         RCLCPP_ERROR(activity->get_logger(), "Failed to start activity");
@@ -41,8 +41,6 @@ int main(int argc, char *argv[]) {
     watchdog->stop();
 
     rclcpp::shutdown();
-
-    delete watchdog;
 
     return 0;
 }
