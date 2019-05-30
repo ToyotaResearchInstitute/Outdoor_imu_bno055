@@ -22,6 +22,7 @@ namespace imu_bno055 {
 BNO055I2CActivity::BNO055I2CActivity() : rclcpp::Node("bno055_i2c_node") {
     RCLCPP_INFO(get_logger(), "initializing");
 
+#if defined(ROS_CRYSTAL)
     get_parameter_or_set("device", param_device, std::string("/dev/i2c-0"));
     get_parameter_or_set("address", param_address, (int)BNO055_ADDRESS_A);
     get_parameter_or_set("frame_id", param_frame_id, std::string("imu"));
@@ -31,6 +32,27 @@ BNO055I2CActivity::BNO055I2CActivity() : rclcpp::Node("bno055_i2c_node") {
     get_parameter_or_set("mag_topic_name", mag_topic_name, std::string("bno055_mag"));
     get_parameter_or_set("temperature_topic_name", temperature_topic_name, std::string("bno055_temperature"));
     get_parameter_or_set("status_topic_name", status_topic_name, std::string("bno055_status"));
+#elif defined(ROS_DASHING)
+    declare_parameter("device", std::string("/dev/i2c-0"));
+    declare_parameter("address", (int)BNO055_ADDRESS_A);
+    declare_parameter("frame_id", std::string("imu"));
+
+    declare_parameter("data_topic_name", std::string("bno055_data"));
+    declare_parameter("raw_topic_name", std::string("bno055_raw"));
+    declare_parameter("mag_topic_name", std::string("bno055_mag"));
+    declare_parameter("temperature_topic_name", std::string("bno055_temperature"));
+    declare_parameter("status_topic_name", std::string("bno055_status"));
+
+    get_parameter("device", param_device);
+    get_parameter("address", param_address);
+    get_parameter("frame_id", param_frame_id);
+
+    get_parameter("data_topic_name", data_topic_name);
+    get_parameter("raw_topic_name", raw_topic_name);
+    get_parameter("mag_topic_name", mag_topic_name);
+    get_parameter("temperature_topic_name", temperature_topic_name);
+    get_parameter("status_topic_name", status_topic_name);
+#endif
 
     current_status.level = 0;
     current_status.name = "BNO055 IMU";
