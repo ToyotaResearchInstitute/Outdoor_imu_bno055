@@ -12,7 +12,8 @@
 
 #include <imu_bno055/bno055_i2c_activity.h>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     rclcpp::init(argc, argv);
 
     // Force flush of the stdout buffer, which ensures a sync of all prints
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
 
     auto watchdog = std::make_unique<watchdog::Watchdog>();
 
-    if(!activity->start()) {
+    if (!activity->start()) {
         RCLCPP_ERROR(activity->get_logger(), "Failed to start activity");
         return -4;
     }
@@ -31,12 +32,16 @@ int main(int argc, char *argv[]) {
     watchdog->start(5000);
 
     int param_rate;
+#if defined(ROS_CRYSTAL)
     activity->get_parameter_or_set("rate", param_rate, 100);
+#elif defined(ROS_DASHING)
+    param_rate = activity->declare_parameter("rate", 100);
+#endif
 
     rclcpp::Rate rate(param_rate);
-    while(rclcpp::ok()) {
+    while (rclcpp::ok()) {
         rate.sleep();
-        if(activity->spinOnce()) {
+        if (activity->spinOnce()) {
             watchdog->refresh();
         }
     }

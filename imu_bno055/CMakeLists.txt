@@ -26,7 +26,6 @@ add_definitions(-DROS_${ROS_DISTRO})
 add_executable(bno055_i2c_node src/bno055_i2c_activity.cpp
   src/bno055_i2c_node.cpp src/watchdog.cpp)
 
-
 ament_target_dependencies(bno055_i2c_node
         rclcpp
         sensor_msgs
