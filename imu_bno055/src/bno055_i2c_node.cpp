@@ -15,6 +15,10 @@
 int main(int argc, char *argv[]) {
     rclcpp::init(argc, argv);
 
+    // Force flush of the stdout buffer, which ensures a sync of all prints
+    // even from a launch file.
+    setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+
     auto activity = std::make_shared<imu_bno055::BNO055I2CActivity>();
 
     auto watchdog = std::make_unique<watchdog::Watchdog>();
