@@ -17,6 +17,12 @@ find_package(std_srvs REQUIRED)
 
 include_directories(include src)
 
+if(NOT DEFINED ENV{ROS_DISTRO})
+  message(FATAL_ERROR "ROS_DISTRO is not defined; have you sourced your ROS distro setup.bash?")
+endif()
+string(TOUPPER $ENV{ROS_DISTRO} ROS_DISTRO)
+add_definitions(-DROS_${ROS_DISTRO})
+
 add_executable(bno055_i2c_node src/bno055_i2c_activity.cpp
   src/bno055_i2c_node.cpp src/watchdog.cpp)
 
