@@ -111,21 +111,20 @@ bool BNO055I2CActivity::reset() {
 bool BNO055I2CActivity::start() {
     RCLCPP_INFO(get_logger(), "starting");
 
-    auto profile = rmw_qos_profile_default;
     if (!pub_data) {
-        pub_data = this->create_publisher<sensor_msgs::msg::Imu>(data_topic_name, profile);
+        pub_data = this->create_publisher<sensor_msgs::msg::Imu>(data_topic_name, 10);
     }
     if (!pub_raw) {
-        pub_raw = this->create_publisher<sensor_msgs::msg::Imu>(raw_topic_name, profile);
+        pub_raw = this->create_publisher<sensor_msgs::msg::Imu>(raw_topic_name, 10);
     }
     if (!pub_mag) {
-        pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>(mag_topic_name, profile);
+        pub_mag = this->create_publisher<sensor_msgs::msg::MagneticField>(mag_topic_name, 10);
     }
     if (!pub_temp) {
-        pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>(temperature_topic_name, profile);
+        pub_temp = this->create_publisher<sensor_msgs::msg::Temperature>(temperature_topic_name, 10);
     }
     if (!pub_status) {
-        pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(status_topic_name, profile);
+        pub_status = this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(status_topic_name, 10);
     }
 
     if(!service_calibrate) {
