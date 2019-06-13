@@ -32,7 +32,7 @@ BNO055I2CActivity::BNO055I2CActivity() : rclcpp::Node("bno055_i2c_node") {
     get_parameter_or_set("mag_topic_name", mag_topic_name, std::string("bno055_mag"));
     get_parameter_or_set("temperature_topic_name", temperature_topic_name, std::string("bno055_temperature"));
     get_parameter_or_set("status_topic_name", status_topic_name, std::string("bno055_status"));
-#elif defined(ROS_DASHING)
+#else  // Dashing or later
     declare_parameter("device", std::string("/dev/i2c-0"));
     declare_parameter("address", (int)BNO055_ADDRESS_A);
     declare_parameter("frame_id", std::string("imu"));

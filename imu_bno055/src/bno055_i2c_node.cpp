@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     int param_rate;
 #if defined(ROS_CRYSTAL)
     activity->get_parameter_or_set("rate", param_rate, 100);
-#elif defined(ROS_DASHING)
+#else  // Dashing or later
     param_rate = activity->declare_parameter("rate", 100);
 #endif
 
